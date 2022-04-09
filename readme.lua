@@ -100,4 +100,4 @@ elseif itemData["name"] == "bmx" then
     info.per = math.random(0, 100)
     info.plate = "Spawned"
 
-https://github.com/KyroWasHere/k_bmx/blob/main/bmx.png?raw=true
+
