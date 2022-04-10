@@ -31,6 +31,7 @@ function LoadThaAnim(dict)
     return true
 end
 local OnBack = false
+local TempDisable = false
 local lastbike = nil
 RegisterNetEvent('k_bmx:fetchBMX', function()
     local playerPed = PlayerPedId()
@@ -55,6 +56,10 @@ RegisterNetEvent('k_bmx:fetchBMX', function()
                 OnBack = true
                 while OnBack do
                     Wait(10)
+                    local hasItem = QBCore.Functions.HasItem('bmx')
+                    if not hasItem then
+                        OnBack = false
+                    end
                 end
                 lastbike = bmxEntity
                 DeleteEntity(bmxEntity)
@@ -72,14 +77,21 @@ RegisterNetEvent('k_bmx:placeBike', function(prim,sec,perl,plate)
     LoadThaAnim('anim@mp_snowball')
     TaskPlayAnim(playerPed, 'anim@mp_snowball', 'pickup_snowball', 8.0, 8.0, -1, 48, 1, false, false, false)
     Wait(1000)
-    local createdbmx = CreateVehicle(bmxID, coords, 1.0, true, true)
-    if createdbmx ~= 0 then
-        SetVehicleColours(createdbmx, prim, sec)
-        SetVehicleExtraColours(createdbmx, perl, 0)
-        SetVehicleNumberPlateText(createdbmx, plate)
-        SetEntityHeading(createdbmx, GetEntityHeading(playerPed))
-        OnBack = false
-        lastbike = nil
+    while not HasModelLoaded(bmxID) do
+        RequestModel(bmxID)
+        Citizen.Wait(10)
+    end
+  
+    if HasModelLoaded(bmxID) then
+        local createdbmx = CreateVehicle(bmxID, coords, 1.0, true, true)
+        if createdbmx ~= 0 then
+            SetVehicleColours(createdbmx, prim, sec)
+            SetVehicleExtraColours(createdbmx, perl, 0)
+            SetVehicleNumberPlateText(createdbmx, plate)
+            SetEntityHeading(createdbmx, GetEntityHeading(playerPed))
+            OnBack = false
+            lastbike = nil
+        end
     end
 end)
 
@@ -90,3 +102,4 @@ AddEventHandler('onResourceStart', function(resourceName)
     print('^2Kypo^0: ^4Thank you for using my script if you like it please check out my website for more like it :)')
     print('^6https://kbase.tebex.io/')
   end)
+
